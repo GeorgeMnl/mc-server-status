@@ -1,0 +1,67 @@
+<!-- HTML code -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Server Status</title>
+    <style>
+        .status {
+            font-weight: bold;
+        }
+
+        .online {
+            color: green;
+        }
+
+        .offline {
+            color: red;
+        }
+
+        .centered {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="centered">
+        <h1>Minecraft Server</h1>
+        <div class="status">
+            
+            Status: <span id="server-status" class="offline">Offline</span>
+            <br><br>
+            Players Online: <span id="player-list"></span>
+        </div>
+
+        <script>
+            var serverIP = 'your-server-ip'; // Replace "your-server-ip" with the ip used to access your server remotely. 
+
+            function checkServerStatus() {
+                var url = `https://api.mcsrvstat.us/2/${serverIP}?rand=${Math.random()}`;
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.online) {
+                            document.getElementById('server-status').textContent = 'Online';
+                            document.getElementById('server-status').className = 'online';
+
+                            if (data.players && data.players.list) {
+                                document.getElementById('player-list').textContent = data.players.list.join(', ');
+                            } else {
+                                document.getElementById('player-list').textContent = 'None';
+                            }
+                        } else {
+                            document.getElementById('server-status').textContent = 'Offline';
+                            document.getElementById('server-status').className = 'offline';
+                            document.getElementById('player-list').textContent = '';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+
+            checkServerStatus();
+            setInterval(checkServerStatus, 30000);
+        </script>
+    </div>
+</body>
+</html>
